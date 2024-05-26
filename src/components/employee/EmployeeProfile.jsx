@@ -18,7 +18,7 @@ function EmployeeProfile() {
         try {
             const token = localStorage.getItem('token');
             const data = await EmployeeService.getEmployeeById(employeeId, token);
-            // console.log(data);
+            console.log(data);
             console.log(profileInfo);
             setEmployee(data);
         } catch (error) {
@@ -52,7 +52,7 @@ function EmployeeProfile() {
             {employee.userType === 'MANAGER' && (
                 <p>Manager Project IDs: {employee.managedProjectIds ? employee.managedProjectIds.join(', ') : 'No project IDs listed'}</p>
             )}
-            {currentUserEmployee && currentUserEmployee.empId === employee.empId && (
+            {profileInfo.userId && profileInfo.userId === employee.userId && (
                 <div>
                     <p style={{ display: 'flex', alignItems: 'center' }}>
                         Add Skill

@@ -46,11 +46,11 @@ function App() {
                 </>
               )}
 
-              {UserService.managerOnly() && (
+              {/* {UserService.managerOnly() && (
                 <>
                   <Route path="/employee-profile/:employeeId" element={<EmployeeProfile/>} />
                 </>
-              )}
+              )} */}
 
               {UserService.adminManagerAny() && (
                 <>

@@ -32,7 +32,7 @@ function ProjectCreatePage() {
                 skills: formData.skills.split(',').map(skill => skill.trim())
             };
             await ProjectService.createProject(projectDto, token);
-            navigate('/projects');  // Navigate to the projects list page after successful creation
+            navigate('/admin/project-management');  // Navigate to the projects list page after successful creation
         } catch (error) {
             console.error('Error creating project:', error);
             setError('Error creating project: ' + error.message);

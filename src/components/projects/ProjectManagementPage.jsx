@@ -1,4 +1,3 @@
-// components/ProjectManagementPage.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ProjectService from '../service/ProjectService';
@@ -9,20 +8,26 @@ function ProjectManagementPage() {
   const { profileInfo } = useUserContext();
 
   useEffect(() => {
-    // Fetch projects data when the component mounts
-    fetchProjects();
-  }, []);
+    if (profileInfo && profileInfo.userId) {
+      fetchProjects();
+    }
+  }, [profileInfo]);
 
   const fetchProjects = async () => {
+    if (!profileInfo || !profileInfo.userId) {
+      return;
+    }
+    
     try {
-      const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+      const token = localStorage.getItem('token');
+
       let response;
       if (profileInfo.role === 'MANAGER') {
-        response = await ProjectService.getProjectsByManagerId(profileInfo.empId, token);
+        response = await ProjectService.getProjectsForManager(token);
       } else {
         response = await ProjectService.listProjects(token);
       }
-      setProjects(response); // Assuming the list of projects is the response itself
+      setProjects(response); // Ensure response is correctly assigned to projects
     } catch (error) {
       console.error('Error fetching projects:', error);
     }
@@ -30,13 +35,10 @@ function ProjectManagementPage() {
 
   const deleteProject = async (projectId) => {
     try {
-      // Prompt for confirmation before deleting the project
       const confirmDelete = window.confirm('Are you sure you want to delete this project?');
-
-      const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+      const token = localStorage.getItem('token');
       if (confirmDelete) {
         await ProjectService.deleteProject(projectId, token);
-        // After deleting the project, fetch the updated list of projects
         fetchProjects();
       }
     } catch (error) {
@@ -48,8 +50,9 @@ function ProjectManagementPage() {
     <div className="user-management-container">
       <h2>Projects Management Page</h2>
       {profileInfo.role === 'ADMIN' && (
-        <button className='reg-button'> <Link to="/create-project">Add Project</Link></button>
-      )}      <table>
+        <button className='reg-button'><Link to="/create-project">Add Project</Link></button>
+      )}
+      <table>
         <thead>
           <tr>
             <th>ID</th>
@@ -60,7 +63,7 @@ function ProjectManagementPage() {
           </tr>
         </thead>
         <tbody>
-          {projects.map(project => (
+          {projects && projects.map(project => (
             <tr key={project.id}>
               <td>{project.id}</td>
               <td>{project.name}</td>
@@ -72,12 +75,12 @@ function ProjectManagementPage() {
                 )}
                 <button><Link to={`/project-detail/${project.id}`}>
                   See Details
-                </Link>
-                </button>
+                </Link></button>
               </td>
             </tr>
           ))}
         </tbody>
+
       </table>
     </div>
   );

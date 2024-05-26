@@ -20,12 +20,22 @@ function ProjectDetailPage() {
     const fetchProjectInfo = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await ProjectService.getProjectById(projectId, token);
+            let response;
+            
+            if (profileInfo.role === 'ADMIN') {
+                // For admin, use the regular getProjectById method
+                response = await ProjectService.getProjectById(projectId, token);
+            } else if (profileInfo.role === 'MANAGER' || profileInfo.role === 'USER') {
+                // For manager or user, use the getProjectByIdForManagerUser method
+                response = await ProjectService.getProjectByIdForManagerUser(projectId, token);
+            }
+    
             setProjectInfo(response);
         } catch (error) {
             console.error('Error fetching project information:', error);
         }
     };
+    
 
     return (
         <div className="profile-page-container">
