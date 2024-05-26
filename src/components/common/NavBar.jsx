@@ -19,6 +19,7 @@ function Navbar() {
             <ul>
                 {!isAuthenticated && <li><Link to="/">NucleusTeq</Link></li>}
                 {isAuthenticated && <li><Link to="/profile">Profile</Link></li>}
+                {isAuthenticated && <li><Link to="/all-employees">All Employees</Link></li>}
                 {isAdmin && <li><Link to="/admin/user-management">User Management</Link></li>}
                 {isAuthenticated && <li><Link to="/" onClick={handleLogout}>Logout</Link></li>}
             </ul>

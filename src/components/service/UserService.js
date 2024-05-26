@@ -1,3 +1,4 @@
+
 import axios from "axios";
 
 class UserService {
@@ -120,6 +121,10 @@ class UserService {
 
     static adminManagerAny() {
         return this.isAuthenticated() && (this.isAdmin() || this.isManager());
+    }
+
+    static userManagerAny() {
+        return this.isAuthenticated() && (this.isUser() || this.isManager());
     }
 
     static managerUserAny() {
