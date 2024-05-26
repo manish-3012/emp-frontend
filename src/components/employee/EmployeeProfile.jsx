@@ -1,42 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import EmployeeService from '../service/EmployeeService'
-import UserService from '../service/UserService'
+import EmployeeService from '../service/EmployeeService';
+import { useUserContext } from '../auth/UserContext';
 
-function EmployeeDetailPage() {
+function EmployeeProfile() {
     const { employeeId } = useParams();
     const [employee, setEmployee] = useState(null);
     const [newSkill, setNewSkill] = useState('');
-    const [currentEmpId, setCurrentEmpId] = useState(null);
     const [error, setError] = useState(null);
+    const { profileInfo, employee: currentUserEmployee } = useUserContext();
 
     useEffect(() => {
         fetchEmployee(employeeId);
     }, [employeeId]);
 
-    useEffect(() => {
-        if (employee && employee.userType !== 'ADMIN') {
-            fetchCurrentEmpId();
-        }
-    }, [employee]);
-
     const fetchEmployee = async (employeeId) => {
         try {
             const token = localStorage.getItem('token');
             const data = await EmployeeService.getEmployeeById(employeeId, token);
+            // console.log(data);
+            console.log(profileInfo);
             setEmployee(data);
         } catch (error) {
             console.error('Error fetching employee:', error);
-        }
-    };
-
-    const fetchCurrentEmpId = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const empId = await EmployeeService.getEmpIdForCurrentUser(token);
-            setCurrentEmpId(empId);
-        } catch (error) {
-            console.error('Error fetching current employee ID:', error);
         }
     };
 
@@ -62,25 +48,27 @@ function EmployeeDetailPage() {
             <p>Username: {employee.username}</p>
             <p>Manager's ID: {employee.managerId}</p>
             <p>Project ID: {employee.projectId}</p>
-            <p>Skills: {employee.skills.join(', ')}</p>
-            {currentEmpId === employee.empId && (
+            <p>Skills: {employee.skills ? employee.skills.join(', ') : 'No skills listed'}</p>
+            {employee.userType === 'MANAGER' && (
+                <p>Manager Project IDs: {employee.managedProjectIds ? employee.managedProjectIds.join(', ') : 'No project IDs listed'}</p>
+            )}
+            {currentUserEmployee && currentUserEmployee.empId === employee.empId && (
                 <div>
-                <p style={{ display: 'flex', alignItems: 'center' }}>
-                Add Skill
-                <input 
-                    type="text" 
-                    value={newSkill} 
-                    onChange={(e) => setNewSkill(e.target.value)} 
-                    placeholder="Enter new skill"
-                    style={{ marginLeft: '8px' }} 
-                />
-                </p>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+                    <p style={{ display: 'flex', alignItems: 'center' }}>
+                        Add Skill
+                        <input 
+                            type="text" 
+                            value={newSkill} 
+                            onChange={(e) => setNewSkill(e.target.value)} 
+                            placeholder="Enter new skill"
+                            style={{ marginLeft: '8px' }} 
+                        />
+                    </p>
+                    {error && <p style={{ color: 'red' }}>{error}</p>}
                     <button onClick={handleAddSkill}>Add Skill</button>
                 </div>
             )}
-            {/* other employee details */}
-            {UserService.isAdmin() && (
+            {profileInfo && profileInfo.role === 'ADMIN' && (
                 <button>
                     <Link to={`/update-employee/${employeeId}`}>Update Employee Detail</Link>
                 </button>
@@ -89,4 +77,4 @@ function EmployeeDetailPage() {
     );
 }
 
-export default EmployeeDetailPage;
+export default EmployeeProfile;

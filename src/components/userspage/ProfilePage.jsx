@@ -1,15 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import UserService from '../service/UserService';
+// components/ProfilePage.jsx
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import EmployeeService from '../service/EmployeeService'
+import EmployeeService from '../service/EmployeeService';
+import { useUserContext } from '../auth/UserContext';
 
 function ProfilePage() {
-    const [profileInfo, setProfileInfo] = useState({});
+    const { profileInfo } = useUserContext();  // Get profileInfo from context
     const [empId, setEmpId] = useState({});
-
-    useEffect(() => {
-        fetchProfileInfo();
-    }, []);
 
     useEffect(() => {
         if (profileInfo.userId) {
@@ -17,28 +14,17 @@ function ProfilePage() {
         }
     }, [profileInfo.userId]);
 
-
-    const fetchProfileInfo = async () => {
-        try {
-
-            const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-            const response = await UserService.getYourProfile(token);
-            setProfileInfo(response.ourUsers);
-        } catch (error) {
-            console.error('Error fetching profile information:', error);
-        }
-    };
-
     const getEmployeeByUserId = async (userId) => {
         try {
-            const token = localStorage.getItem('token'); 
+            const token = localStorage.getItem('token');
             const response = await EmployeeService.getEmployeeByUserId(userId, token);
             console.log(response);
             setEmpId(response.empId);
-        } catch(error) {
+        } catch (error) {
             console.error('Error fetching Employee information from UserId:', error);
+            setEmpId(null);
         }
-    }
+    };
 
     return (
         <div className="profile-page-container">
@@ -48,7 +34,7 @@ function ProfilePage() {
             {profileInfo.role === "ADMIN" && (
                 <button><Link to={`/update-user/${profileInfo.userId}`}>Update This Profile</Link></button>
             )}
-            {profileInfo.role !== "ADMIN" && (
+            {profileInfo.role !== "ADMIN" && empId && (
                 <button>
                     <Link to={`/employee-profile/${empId}`}>See Complete Profile</Link>
                 </button>

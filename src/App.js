@@ -2,6 +2,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from './components/common/NavBar';
+import { UserProvider } from '../src/components/auth/UserContext';
 import LoginPage from './components/auth/LoginPage';
 import RegistrationPage from './components/auth/RegistrationPage';
 import FooterComponent from './components/common/Footer';
@@ -13,62 +14,74 @@ import EmployeeProfile from './components/employee/EmployeeProfile';
 import EmployeeListPage from './components/employee/EmployeeListPage';
 import UpdateEmployee from './components/employee/UpdateEmployee';
 import ProjectManagementPage from './components/projects/ProjectManagementPage';
+import ProjectDetailPage from './components/projects/ProjectDetailPage';
+import ProjectCreatePage from './components/projects/ProjectCreatePage';
+import ProjectUpdate from './components/projects/ProjectUpdate';
 
 function App() {
 
   return (
-    <BrowserRouter>
-      <div className="App">
-        <Navbar />
-        <div className="content">
-          <Routes>
-            <Route exact path="/" element={<LoginPage />} />
-            <Route exact path="/login" element={<LoginPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/all-employees" element={<EmployeeListPage />} />
-            <Route path="/employee-profile/:employeeId" element={<EmployeeProfile/>} />
+    <UserProvider>
+      <BrowserRouter>
+        <div className="App">
+          <Navbar />
+          <div className="content">
+            <Routes>
+              <Route exact path="/" element={<LoginPage />} />
+              <Route exact path="/login" element={<LoginPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/all-employees" element={<EmployeeListPage />} />
+              <Route path="/employee-profile/:employeeId" element={<EmployeeProfile/>} />
+              <Route path="/project-detail/:projectId" element={<ProjectDetailPage/>} />
 
+              {/* Check if user is authenticated and admin before rendering admin-only routes */}
+              {UserService.adminOnly() && (
+                <>
+                  <Route path="/register" element={<RegistrationPage />} />
+                  <Route path="/create-project" element={<ProjectCreatePage />} />
+                  <Route path="/admin/user-management" element={<UserManagementPage />} />
+                  <Route path="/update-user/:userId" element={<UpdateUser />} />
+                  <Route path="/update-employee/:empId" element={<UpdateEmployee />} />
+                  <Route path="/update-project/:projectId" element={<ProjectUpdate />} />
+                </>
+              )}
 
-            {/* Check if user is authenticated and admin before rendering admin-only routes */}
-            {UserService.adminOnly() && (
-              <>
-                <Route path="/register" element={<RegistrationPage />} />
-                <Route path="/admin/user-management" element={<UserManagementPage />} />
-                <Route path="/update-user/:userId" element={<UpdateUser />} />
-                <Route path="/update-employee/:empId" element={<UpdateEmployee />} />
-                <Route path="/admin/project-management" element={<ProjectManagementPage />} />
-              </>
-            )}
+              {UserService.managerOnly() && (
+                <>
+                  <Route path="/employee-profile/:employeeId" element={<EmployeeProfile/>} />
+                </>
+              )}
 
-            {UserService.userManagerAny() && (
-              <>
-                <Route path="/employee-profile/:employeeId" element={<EmployeeProfile/>} />
-              </>
-            )}
-{/* 
-            {UserService.managerOnly() && (
-              <>
-                <Route path="/project-detail" element={<ProjectDetailPage />} />
-                <Route path="/admin/project-management" element={<ProjectManagementPage />} />
-                <Route path="/update-
-                /:projectId" element={<ProjectUpdate />} />
-              </>
-            )}
+              {UserService.adminManagerAny() && (
+                <>
+                  <Route path="/admin/project-management" element={<ProjectManagementPage />} />
+                </>
+              )}
+  {/* 
+              {UserService.managerOnly() && (
+                <>
+                  <Route path="/project-detail" element={<ProjectDetailPage />} />
+                  <Route path="/admin/project-management" element={<ProjectManagementPage />} />
+                  <Route path="/update-
+                  /:projectId" element={<ProjectUpdate />} />
+                </>
+              )}
 
-            {UserService.adminManagerAny() && (
-              <>
-                <Route path="/register" element={<RegistrationPage />} />
-                <Route path="/admin/user-management" element={<UserManagementPage />} />
-                <Route path="/update-user/:userId" element={<UpdateUser />} />
-              </>
-            )} */}
+              {UserService.adminManagerAny() && (
+                <>
+                  <Route path="/register" element={<RegistrationPage />} />
+                  <Route path="/admin/user-management" element={<UserManagementPage />} />
+                  <Route path="/update-user/:userId" element={<UpdateUser />} />
+                </>
+              )} */}
 
-            <Route path="*" element={<Navigate to="/login" />} />‰
-          </Routes>
+              <Route path="*" element={<Navigate to="/login" />} />‰
+            </Routes>
+          </div>
+          <FooterComponent />
         </div>
-        <FooterComponent />
-      </div>
-    </BrowserRouter>
+      </BrowserRouter>
+    </UserProvider>
   );
 }
 

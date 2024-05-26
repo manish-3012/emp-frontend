@@ -32,8 +32,8 @@ function UpdateEmployeePage() {
                 throw new Error('No token found');
             }
             console.log('Fetching employee with ID:', empId);
-            console.log('Token:', token);
             const data = await EmployeeService.getEmployeeById(empId, token);
+            console.log(data);
             setEmployee(data);
             setFormData({
                 name: data.name || '',
@@ -79,8 +79,8 @@ function UpdateEmployeePage() {
                 skills: formData.skills.split(',').map(skill => skill.trim()),
                 managedProjectIds: formData.managedProjectIds
             };
-            await EmployeeService.updateEmployee(empId, updatedData, token);
-            navigate(`/employee/${empId}`);
+            await EmployeeService.partialUpdateEmployee(empId, updatedData, token);
+            navigate(`/employee-profile/${empId}`);
         } catch (error) {
             console.error('Error updating employee:', error);
             setError('Error updating employee: ' + error.message);

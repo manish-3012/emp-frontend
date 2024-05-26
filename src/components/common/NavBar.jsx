@@ -5,6 +5,7 @@ import UserService from '../service/UserService';
 function Navbar() {
     const isAuthenticated = UserService.isAuthenticated();
     const isAdmin = UserService.isAdmin();
+    const isManager = UserService.isManager();
 
     const handleLogout = () => {
         const confirmLogout = window.confirm('Are you sure you want to logout this user?');
@@ -13,7 +14,6 @@ function Navbar() {
         }
     };
 
-
     return (
         <nav>
             <ul>
@@ -21,6 +21,7 @@ function Navbar() {
                 {isAuthenticated && <li><Link to="/profile">Profile</Link></li>}
                 {isAuthenticated && <li><Link to="/all-employees">All Employees</Link></li>}
                 {isAdmin && <li><Link to="/admin/user-management">User Management</Link></li>}
+                {(isAdmin || isManager) && <li><Link to="/admin/project-management">Project Management</Link></li>}
                 {isAuthenticated && <li><Link to="/" onClick={handleLogout}>Logout</Link></li>}
             </ul>
         </nav>

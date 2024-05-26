@@ -2,9 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ProjectService from '../service/ProjectService';
+import { useUserContext } from '../auth/UserContext';
 
 function ProjectManagementPage() {
   const [projects, setProjects] = useState([]);
+  const { profileInfo } = useUserContext();
 
   useEffect(() => {
     // Fetch projects data when the component mounts
@@ -14,7 +16,12 @@ function ProjectManagementPage() {
   const fetchProjects = async () => {
     try {
       const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-      const response = await ProjectService.listProjects(token);
+      let response;
+      if (profileInfo.role === 'MANAGER') {
+        response = await ProjectService.getProjectsByManagerId(profileInfo.empId, token);
+      } else {
+        response = await ProjectService.listProjects(token);
+      }
       setProjects(response); // Assuming the list of projects is the response itself
     } catch (error) {
       console.error('Error fetching projects:', error);
@@ -38,10 +45,11 @@ function ProjectManagementPage() {
   };
 
   return (
-    <div className="project-management-container">
+    <div className="user-management-container">
       <h2>Projects Management Page</h2>
-      <button className='reg-button'> <Link to="/create-project">Add Project</Link></button>
-      <table>
+      {profileInfo.role === 'ADMIN' && (
+        <button className='reg-button'> <Link to="/create-project">Add Project</Link></button>
+      )}      <table>
         <thead>
           <tr>
             <th>ID</th>
@@ -57,11 +65,13 @@ function ProjectManagementPage() {
               <td>{project.id}</td>
               <td>{project.name}</td>
               <td>{project.description}</td>
-              <td>{project.managerId}</td>
+              <td>{project.manager}</td>
               <td>
-                <button className='delete-button' onClick={() => deleteProject(project.id)}>Delete</button>
-                <button><Link to={`/update-project/${project.id}`}>
-                  Update
+                {profileInfo.role === 'ADMIN' && (
+                  <button className='delete-button' onClick={() => deleteProject(project.id)}>Delete</button>
+                )}
+                <button><Link to={`/project-detail/${project.id}`}>
+                  See Details
                 </Link>
                 </button>
               </td>

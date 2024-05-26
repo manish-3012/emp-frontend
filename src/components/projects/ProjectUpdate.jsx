@@ -10,7 +10,8 @@ function ProjectUpdate() {
   const [projectData, setProjectData] = useState({
     name: '',
     description: '',
-    managerId: ''
+    manager: '',
+    skills: ''
   });
 
   useEffect(() => {
@@ -21,8 +22,8 @@ function ProjectUpdate() {
     try {
       const token = localStorage.getItem('token');
       const response = await ProjectService.getProjectById(projectId, token); // Pass projectId to getProjectById
-      const { name, description, managerId } = response;
-      setProjectData({ name, description, managerId });
+      const { name, description, manager, skills } = response;
+      setProjectData({ name, description, manager, skills: skills.join(', ') });
     } catch (error) {
       console.error('Error fetching project data:', error);
     }
@@ -42,7 +43,11 @@ function ProjectUpdate() {
       const confirmUpdate = window.confirm('Are you sure you want to update this project?');
       if (confirmUpdate) {
         const token = localStorage.getItem('token');
-        const res = await ProjectService.updateProject(projectId, projectData, token);
+        const updatedProjectData = {
+          ...projectData,
+          skills: projectData.skills.split(',').map(skill => skill.trim())
+        };
+        const res = await ProjectService.updateProject(projectId, updatedProjectData, token);
         console.log(res);
         // Redirect to project management page or display a success message
         navigate("/admin/project-management");
@@ -67,7 +72,11 @@ function ProjectUpdate() {
         </div>
         <div className="form-group">
           <label>Manager ID:</label>
-          <input type="text" name="managerId" value={projectData.managerId} onChange={handleInputChange} />
+          <input type="text" name="manager" value={projectData.manager} onChange={handleInputChange} />
+        </div>
+        <div className="form-group">
+          <label>Skills (comma separated):</label>
+          <input type="text" name="skills" value={projectData.skills} onChange={handleInputChange} />
         </div>
         <button type="submit">Update</button>
       </form>

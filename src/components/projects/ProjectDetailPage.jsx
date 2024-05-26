@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import ProjectService from '../service/ProjectService';
+import { useUserContext } from '../auth/UserContext';
 
 function ProjectDetailPage() {
     const { projectId } = useParams();
-    const [projectInfo, setProjectInfo] = useState({});
+    const { profileInfo } = useUserContext();  // Get profileInfo from context
+    const [projectInfo, setProjectInfo] = useState({
+        name: '',
+        description: '',
+        manager: '',
+        skills: [] // Initialize skills as an empty array
+    });
 
     useEffect(() => {
         fetchProjectInfo();
@@ -12,7 +19,7 @@ function ProjectDetailPage() {
 
     const fetchProjectInfo = async () => {
         try {
-            const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+            const token = localStorage.getItem('token');
             const response = await ProjectService.getProjectById(projectId, token);
             setProjectInfo(response);
         } catch (error) {
@@ -21,12 +28,13 @@ function ProjectDetailPage() {
     };
 
     return (
-        <div className="project-detail-page-container">
+        <div className="profile-page-container">
             <h2>Project Information</h2>
             <p>Project Name: {projectInfo.name}</p>
             <p>Description: {projectInfo.description}</p>
-            <p>Manager ID: {projectInfo.managerId}</p>
-            {(UserService.isAdmin() || UserService.isManager()) && (
+            <p>Manager ID: {projectInfo.manager}</p>
+            <p>Skills: {projectInfo.skills && projectInfo.skills.length > 0 ? projectInfo.skills.join(', ') : 'No skills listed'}</p>
+            {(profileInfo.role === "ADMIN" || profileInfo.role === "MANAGER") && (
                 <button>
                     <Link to={`/update-project/${projectInfo.id}`}>Update This Project</Link>
                 </button>
