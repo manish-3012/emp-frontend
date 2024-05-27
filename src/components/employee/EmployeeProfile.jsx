@@ -50,7 +50,7 @@ function EmployeeProfile() {
             <p>Project ID: {employee.projectId}</p>
             <p>Skills: {employee.skills ? employee.skills.join(', ') : 'No skills listed'}</p>
             {employee.userType === 'MANAGER' && (
-                <p>Manager Project IDs: {employee.managedProjectIds ? employee.managedProjectIds.join(', ') : 'No project IDs listed'}</p>
+                <p>Managed Project IDs: {employee.managedProjectIds ? employee.managedProjectIds.join(', ') : 'No project IDs listed'}</p>
             )}
             {profileInfo.userId && profileInfo.userId === employee.userId && (
                 <div>

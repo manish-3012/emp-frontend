@@ -48,9 +48,21 @@ class RequestService {
         }
     }
 
-    static async getRequestById(requestId, token, isAdmin = false) {
+    static async adminGetRequestById(requestId, token) {
         try {
-            const endpoint = isAdmin ? `/admin/get-request/${requestId}` : `/manager/get-request/${requestId}`;
+            const endpoint = `/admin/get-request/${requestId}`;
+            const response = await axios.get(`${RequestService.BASE_URL}${endpoint}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            return response.data;
+        } catch (err) {
+            throw err;
+        }
+    }
+    
+    static async managerGetRequestById(requestId, token) {
+        try {
+            const endpoint = `/manager/get-request/${requestId}`;
             const response = await axios.get(`${RequestService.BASE_URL}${endpoint}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });

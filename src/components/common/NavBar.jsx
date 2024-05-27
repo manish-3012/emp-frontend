@@ -22,6 +22,7 @@ function Navbar() {
                 {isAuthenticated && <li><Link to="/all-employees">All Employees</Link></li>}
                 {isAdmin && <li><Link to="/admin/user-management">User Management</Link></li>}
                 {(isAdmin || isManager) && <li><Link to="/admin/project-management">Project Management</Link></li>}
+                {(isAdmin || isManager) && <li><Link to="/request-management">Request Management</Link></li>}
                 {isAuthenticated && <li><Link to="/" onClick={handleLogout}>Logout</Link></li>}
             </ul>
         </nav>

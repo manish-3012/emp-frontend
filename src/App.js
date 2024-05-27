@@ -17,6 +17,10 @@ import ProjectManagementPage from './components/projects/ProjectManagementPage';
 import ProjectDetailPage from './components/projects/ProjectDetailPage';
 import ProjectCreatePage from './components/projects/ProjectCreatePage';
 import ProjectUpdate from './components/projects/ProjectUpdate';
+import RequestCreatePage from './components/requests/RequestCreatePage';
+import RequestDetailPage from './components/requests/RequestDetailPage';
+import RequestUpdatePage from './components/requests/RequestUpdatePage';
+import RequestManagementPage from './components/requests/RequestManagementPage';
 
 function App() {
 
@@ -46,15 +50,18 @@ function App() {
                 </>
               )}
 
-              {/* {UserService.managerOnly() && (
+              {UserService.managerOnly() && (
                 <>
-                  <Route path="/employee-profile/:employeeId" element={<EmployeeProfile/>} />
+                  <Route path="/create-request" element={<RequestCreatePage/>} />
+                  <Route path="/update-request/:requestId" element={<RequestUpdatePage/>} />
                 </>
-              )} */}
+              )}
 
               {UserService.adminManagerAny() && (
                 <>
                   <Route path="/admin/project-management" element={<ProjectManagementPage />} />
+                  <Route path="/request-management" element={<RequestManagementPage />} />
+                  <Route path="/request-detail/:reqId" element={<RequestDetailPage />} />
                 </>
               )}
   {/* 
