@@ -31,9 +31,9 @@ function UpdateEmployeePage() {
             if (!token) {
                 throw new Error('No token found');
             }
-            console.log('Fetching employee with ID:', empId);
+            // console.log('Fetching employee with ID:', empId);
             const data = await EmployeeService.getEmployeeById(empId, token);
-            console.log(data);
+            // console.log(data);
             setEmployee(data);
             setFormData({
                 name: data.name || '',
@@ -46,7 +46,7 @@ function UpdateEmployeePage() {
                 managedProjectIds: data.managedProjectIds || []
             });
         } catch (error) {
-            console.error('Error fetching employee:', error);
+            // console.error('Error fetching employee:', error);
             setError('Error fetching employee: ' + error.message);
         }
     };
@@ -65,7 +65,7 @@ function UpdateEmployeePage() {
                 [name]: value
             }));
         }
-    };
+    };    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
