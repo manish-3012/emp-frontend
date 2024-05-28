@@ -54,6 +54,16 @@ function RequestManagementPage() {
         }
     };
 
+    const handleDelete = async (requestId) => {
+        try {
+            const token = localStorage.getItem('token');
+            await RequestService.deleteRequest(requestId, token);
+            fetchRequests(); // Refresh the list after deletion
+        } catch (error) {
+            console.error('Error deleting request:', error);
+        }
+    };
+
     return (
         <div className="user-management-container">
             <h2>Request Management Page</h2>
@@ -84,6 +94,9 @@ function RequestManagementPage() {
                                         <button className='green-button' onClick={() => handleApprove(request.reqId)}>Approve</button>
                                         <button className='delete-button' onClick={() => handleReject(request.reqId)}>Reject</button>
                                     </div>
+                                )}
+                                {profileInfo.role === 'MANAGER' && (
+                                    <button className='delete-button' onClick={() => handleDelete(request.reqId)}>Delete</button>
                                 )}
                             </td>
                         </tr>

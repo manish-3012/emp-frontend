@@ -93,6 +93,17 @@ class RequestService {
             throw err;
         }
     }
+
+    static async deleteRequest(requestId, token) {
+        try {
+            const response = await axios.delete(`${RequestService.BASE_URL}/manager/delete-request/${requestId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            return response.data;
+        } catch (err) {
+            throw err;
+        }
+    }
 }
 
 export default RequestService;

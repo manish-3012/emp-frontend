@@ -47,13 +47,23 @@ function EmployeeProfile() {
             <p>Role: {employee.userType}</p>
             <p>Username: {employee.username}</p>
             <p>Manager's ID: {employee.managerId}</p>
-            <p>Project ID: {employee.projectId}</p>
+            {profileInfo.role === 'ADMIN' && (
+                <p>Project ID: {employee.projectId}</p>
+            )}
             <p>Skills: {employee.skills ? employee.skills.join(', ') : 'No skills listed'}</p>
             {employee.userType === 'MANAGER' && (
                 <p>Managed Project IDs: {employee.managedProjectIds ? employee.managedProjectIds.join(', ') : 'No project IDs listed'}</p>
             )}
             {profileInfo.userId && profileInfo.userId === employee.userId && (
                 <div>
+                    <p>
+                        Project ID: {employee.projectId}  
+                        {employee.projectId ? (
+                            <Link className='green-button' to={`/project-detail/${employee.projectId}`}>See Project Details</Link>
+                        ) : (
+                            'No project assigned'
+                        )}
+                    </p>
                     <p style={{ display: 'flex', alignItems: 'center' }}>
                         Add Skill
                         <input 

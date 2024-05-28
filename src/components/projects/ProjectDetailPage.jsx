@@ -14,22 +14,23 @@ function ProjectDetailPage() {
     });
 
     useEffect(() => {
-        fetchProjectInfo();
+        fetchProjectInfo(projectId);
     }, [projectId]);
 
-    const fetchProjectInfo = async () => {
+    const fetchProjectInfo = async (projectId) => {
         try {
             const token = localStorage.getItem('token');
             let response;
-            
+            console.log("ProfileInfo: ", profileInfo);
+            console.log("Fetching projectInfo");
             if (profileInfo.role === 'ADMIN') {
                 // For admin, use the regular getProjectById method
                 response = await ProjectService.getProjectById(projectId, token);
-            } else if (profileInfo.role === 'MANAGER' || profileInfo.role === 'USER') {
+            } else if (profileInfo.role === 'MANAGER' || profileInfo.role === 'EMPLOYEE') {
                 // For manager or user, use the getProjectByIdForManagerUser method
                 response = await ProjectService.getProjectByIdForManagerUser(projectId, token);
             }
-    
+            console.log("projectInfo:", response);
             setProjectInfo(response);
         } catch (error) {
             console.error('Error fetching project information:', error);
